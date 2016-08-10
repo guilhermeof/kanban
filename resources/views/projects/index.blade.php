@@ -6,12 +6,31 @@
 @section('content')
 
     <div class="container">
+        <div class="row">
+            <h1>Projetos</h1>
 
-        <h1>Projetos</h1>
+            <div class="btn-group">
+                <a href="{{ route('ProjectCreate') }}" class="btn btn-default"> Novo Projeto </a>
+            </div>
 
-        <div class="checkbox">
-            <a href="{{ route('ProjectCreate') }}" class="btn btn-default"> Novo Projeto </a>
+        </div> <!-- .row -->
+
+        <div class="row">
+            <div class="col-md-4">
+            @foreach($projects as $project)
+            <div class="panel panel-default panel-body-project">
+                <div class="panel-body">
+                    {{ $project->nome }}
+                </div>
+            </div>
+                @endforeach
+            </div>
         </div>
+
+
+
+
+
 
         <table class="table table-striped table-bordered table-hover">
             <thead>
@@ -38,7 +57,7 @@
             @endforeach
             </tbody>
         </table>
+
+
     </div>
-
-
 @endsection
