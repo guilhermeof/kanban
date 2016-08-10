@@ -45,6 +45,8 @@ Route::group(['prefix' => 'project', 'namespace' => 'System'], function (){
 
     Route::post('/task/{id}/update', 'TaskController@update' )->name('TaskUpdate');
 
+    Route::get('/task/{task}', 'TaskController@status')->name('TaskAtt');
+
 
 });
 

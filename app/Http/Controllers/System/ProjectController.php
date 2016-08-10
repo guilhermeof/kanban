@@ -47,6 +47,8 @@ class ProjectController extends Controller
 
         $project->save();
 
+        flash('Tarefa criada com Sucesso !', 'success');
+
         return redirect()->route('ProjectMain');
 
     }
@@ -73,6 +75,8 @@ class ProjectController extends Controller
         $project->idCreator = $request->idCreator;
         $project->save();
 
+        flash('Tarefa Atualizada com Sucesso !', 'success');
+
         return redirect()->route('ProjectMain');
     }
 
@@ -81,6 +85,8 @@ class ProjectController extends Controller
 
         $project = Project::find($id);
         $project->delete();
+
+        flash('Tarefa deletado com Sucesso !', 'success');
 
         return redirect()->route('ProjectMain');
 

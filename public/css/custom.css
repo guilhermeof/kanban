@@ -1,0 +1,38 @@
+h1 {
+    font-size:40px;
+}
+.btn-group {
+    margin-bottom: 10px;
+}
+
+.panel-box-title {
+    padding: 10px 15px;
+    border-bottom: 1px solid transparent;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+}
+.title-red {
+    background-color: #a94442;
+    color: #FFFFFF;
+    border-color: #ddd;
+}
+.title-yellow {
+    background-color: #d58512;
+    color: #FFFFFF;
+    border-color: #ddd;
+}
+.title-blue {
+    background-color: #2e6da4;
+    color: #FFFFFF;
+    border-color: #ddd;
+}
+.title-green {
+    background-color: #3c763d;
+    color: #FFFFFF;
+    border-color: #ddd;
+}
+.panel-gray {
+    background-color: rgba(0,0,0,0.08);
+
+
+}
