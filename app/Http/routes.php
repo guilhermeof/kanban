@@ -39,13 +39,17 @@ Route::group(['prefix' => 'project', 'namespace' => 'System'], function (){
 
     Route::post('/task/store', 'TaskController@store')->name('TaskStore');
 
-    Route::get('/{project}/task/{id}/destroy','TaskController@destroy' )->name('TaskDestroy');
+    Route::get('/task/{id}/destroy','TaskController@destroy' )->name('TaskDestroy');
 
     Route::get('/task/{id}/edit', 'TaskController@edit' )->name('TaskEdit');
 
     Route::post('/task/{id}/update', 'TaskController@update' )->name('TaskUpdate');
 
     Route::get('/task/{task}', 'TaskController@status')->name('TaskAtt');
+
+    Route::get('/task/{id}/async', 'TaskController@async')->name('async');
+
+    Route::get('/task/change/{id}/status', 'TaskController@changeStatus');
 
 
 });

@@ -74,7 +74,7 @@ class TaskController extends Controller
 
     }
 
-    public function destroy($idProjeto, $idTask)
+    public function destroy($idTask)
     {
 
         try {
@@ -85,8 +85,9 @@ class TaskController extends Controller
 
             if (!$task) {
                 flash('Erro !', 'danger');
-
             }
+
+            $idProjeto = $task->idProject;
 
             $task->delete();
 
@@ -156,10 +157,42 @@ class TaskController extends Controller
             $status->save();
             return redirect()->back();
         }
+    }
 
+    public function changeStatus($id, Request $request)
+    {
+        $task = Task::find($id);
 
+        if($request->input('status') != '0')
+        {
+            $task->status = $request->input('status');
+        }
 
+        $task->save();
 
+        return redirect()->route('TaskMain', ['id' => $task->idProject]);
+    }
 
+    public function async($id)
+    {
+        $task = Task::find($id);
+        $select = [];
+
+        if($task->status == 'todo') {
+            $select = ['doing'];
+        } elseif($task->status == 'doing') {
+            $select = ['todo', 'review'];
+        } elseif($task->status == 'review') {
+            $select = ['done'];
+        }else {
+            $select = [];
+        }
+
+        $result = array(
+            'task' => $task,
+            'select' => $select
+        );
+
+        return $result;
     }
 }

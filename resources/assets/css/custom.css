@@ -38,4 +38,24 @@ h1 {
 
 .panel-body-project {
     padding: 25px;
+    background-color: #338cb7;
+}
+
+#projects a {
+    color: inherit;
+}
+
+#projects a:hover {
+    color: inherit;
+    text-decoration: inherit;
+}
+
+#projects .panel {
+    border-radius: 15px;
+}
+
+#projects .panel-body p {
+    font-size: 22px;
+    color: #fff;
+    font-weight: bold;
 }
