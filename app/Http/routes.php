@@ -31,7 +31,7 @@ Route::group(['prefix' => 'project', 'namespace' => 'System'], function (){
 
     Route::post('{project}/update', 'ProjectController@update')->name('ProjectUpdate');
 
-    Route::get('{project}/destroy', 'ProjectController@destroy')->name('ProjectDestroy');
+    Route::delete('{project}/destroy', 'ProjectController@destroy')->name('ProjectDestroy');
 
     Route::get('/{id}/task',  'TaskController@index' )->name('TaskMain');
 

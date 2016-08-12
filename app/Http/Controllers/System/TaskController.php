@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Http\Controllers\System;
 use App\Http\Requests;
+use Symfony\Component\HttpFoundation\Response;
 
 
 class TaskController extends Controller
@@ -139,8 +140,6 @@ class TaskController extends Controller
     {
         $status = Task::find($id);
 
-        //$tasks = ['todo' => [], 'doing' => [], 'review' => [], 'done' => []];
-
 
         if($status->status === "todo"){
             $status->status = "doing";
@@ -176,6 +175,13 @@ class TaskController extends Controller
     public function async($id)
     {
         $task = Task::find($id);
+
+        $result = ['data' => [], 'error' => []];
+
+        if(is_null($task)) {
+            $result['error'] = "Task não encontrada";
+            return response()->json($result, 404);
+        }
         $select = [];
 
         if($task->status == 'todo') {
@@ -193,6 +199,6 @@ class TaskController extends Controller
             'select' => $select
         );
 
-        return $result;
+        return response()->json($result, 200);
     }
 }

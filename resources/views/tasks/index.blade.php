@@ -23,10 +23,6 @@
                                 <div class="panel-body" data-task-id="{{$task->id}}">
                                     {{$task->nome}}
 
-                                    <button id="delete">
-                                        <i class="fa fa-trash-o"></i>
-                                        Delete
-                                    </button>
                                 </div>
                             </div>
                         @endforeach
@@ -80,7 +76,36 @@
     </div> <!-- ;container -->
 
 
-    <div id="modalTask" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title"></h4>
+                </div>
+                <div class="modal-body">
+                    <p></p>
+                </div>
+                <div class="modal-footer">
+                    <div class="pull-left">
+                        <form class="form-inline formDelete" href="" action="">
+                            <button class="btn btn-danger" >
+                                <i class="fa fa-trash"></i>
+                            </button>
+
+                        </form>
+                        <a class="btn btn-default" href=""><i class="fa fa-edit"></i></a>
+
+                    </div>
+                    <div class="pull-right">
+                        <form method="get" class="form-inline formStatus" action="">
+                            <select name="status" class="form-control"></select>
+                        <button class="btn btn-info btn-submit">Ok</button>
+                        </form>
+                    </div>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
 
 
@@ -88,66 +113,91 @@
 
 @section('scripts')
     <script>
-        $(document).ready(function() {
 
-            $('.panel-gray .panel-body').on('click',function(e) {
-               var id = $(this).attr('data-task-id');
+        $(document).ready(function () {
+            $('.panel-gray .panel-body ').click(function (e) {
+                var id = $(this).attr('data-task-id');
 
-                $.get('/project/task/'+id+'/async', function(data) {
-
+                $.ajax({
+                    method: 'GET',
+                    url: '/project/task/'+id+'/async'
+                }).done(function (data){
                     var task = data.task;
-                    var select = data.select;
+                    var modal = $('.modal');
 
-                    $('#modalTask').empty();
+                    var title = $('.modal .modal-title');
+                    var body = $('.modal .modal-body');
+                    var footer = $('.modal .modal-footer');
 
-                    var html_modal = '<div class="modal-dialog" role="document">' +
-                            '<div class="modal-content">' +
-                           '<div class="modal-header">' +
-                            '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>' +
-                    '<h4 class="modal-title">'+task.nome+'</h4>' +
-                    '</div>' +
-                    '<div class="modal-body">' +
-                            '<p>One fine body&hellip;</p>' +
-                    '</div>'+
-                    '<div class="modal-footer">' +
-                            '<div class="col-md-1">' +
-                                '<a href="/project/task/'+task.id+'/edit" class="btn btn-default"><i class="fa fa-edit"></i></a>&nbsp;' +
-                            '</div>' +
-                            '<div class="col-md-1">' +
-                                '<a href="/project/task/'+task.id+'/destroy" class="btn btn-danger"><i class="fa fa-trash"></i></a>' +
-                            '</div>';
+                    title.empty();
+                    title.append(task.nome);
 
+                    body.empty();
+                    body.append('<p>Este é o corpo do Modal</p>');
 
-                    if(select.length > 0) {
-                        html_modal +=  '<form class="form-inline" method="GET" action="/project/task/change/'+task.id+'/status"><div class="form-group"><select name="status" id="status" class="form-control select-status"><option value="0">Status</option>';
-                        for(var i=0; i<select.length;i++) {
-                            html_modal += '<option value="'+select[i]+'">'+select[i]+'</option>';
+                    $('.modal-footer .btn-default').attr('href', '/project/task/'+id+'/edit');
+                    $('.modal-footer .formDelete').attr('href', '/project/task/'+id+'/destroy');
+
+                    //Popular Select
+//                    $('select')
+                    var status = data.select ;
+                    var footer_html = '<option value="0">Status</option>';
+
+                    if (status.length > 0){
+                        for(var i=0; i<status.length;i++){
+                            footer_html += '<option value="'+status[i]+'">'+status[i]+'</option>';
                         }
-                        html_modal += '</select></div>&nbsp;<button class="btnStatus btn btn-info">Ok</button></form>';
+                        $('select').empty();
+                        $('select').append(footer_html);
+                        $('.formStatus').attr('action', '/project/task/change/'+id+'/status');
+                    }else {
+                        $('.formStatus').hide();
                     }
 
-                    html_modal += '</div>' +
-                    '</div>' +
-                    '</div>' ;
-
-                    $('#modalTask').append(html_modal);
-                    $('#modalTask').modal();
+                    modal.modal();
+                }).fail(function(data){
+                    var obj = data.responseJSON;
+                    alert(obj.error);
                 });
             });
 
+                $('.btn-submit').click(function (e) {
+                   e.preventDefault();
+                    var status = $('select').val();
+                    if (status != 0){
+                        $('.formStatus').submit();
+                    }
 
-            $(".btnStatus").click(function (e) {
+                });
+
+            $('.formDelete').click(function excluir(e){
                 e.preventDefault();
+                //var btn = $(this);
+                swal({
+                            title: "Exclusão de Tarefa",
+                            text: "Você deseja realmente excluir a tarefa?",
+                            type: "warning",
+                            showCancelButton: true,
+                            confirmButtonColor: '#DD6B55',
+                            confirmButtonText: "Sim",
+                            cancelButtonText: "Não",
+                            closeOnConfirm: false,
+                            closeOnCancel: true
+                        },
 
-                var status  = S('select-status').val();
+                        function(isConfirm){
+                            if (isConfirm){
 
-                if(status != '0') {
-                    $('form').submit();
-                }
+                                //btn.closest('form').trigger('submit');
+                                $('.formDelete').submit();
+
+                            }
+                        });
             });
 
-
         });
+
+
     </script>
 @endsection
 

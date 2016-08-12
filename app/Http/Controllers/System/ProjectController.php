@@ -84,6 +84,13 @@ class ProjectController extends Controller
     {
 
         $project = Project::find($id);
+
+        $tasks = $project->tasks;
+
+        foreach($tasks as $task) {
+            $task->delete();
+        }
+
         $project->delete();
 
         flash('Tarefa deletado com Sucesso !', 'success');
