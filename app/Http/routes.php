@@ -31,9 +31,11 @@ Route::group(['prefix' => 'project', 'namespace' => 'System'], function (){
 
     Route::post('{project}/update', 'ProjectController@update')->name('ProjectUpdate');
 
-    Route::delete('{project}/destroy', 'ProjectController@destroy')->name('ProjectDestroy');
+    Route::get('{project}/destroy', 'ProjectController@destroy')->name('ProjectDestroy');
 
     Route::get('/{id}/task',  'TaskController@index' )->name('TaskMain');
+
+    Route::get('/{id}/kanban',  'TaskController@kanban' )->name('TaskKanban');
 
     Route::get('{id}/task/create', 'TaskController@create' )->name('TaskCreate');
 

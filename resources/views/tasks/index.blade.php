@@ -8,7 +8,9 @@
                 <h1>Tarefas do Projeto {{ $project->nome }}</h1>
 
                 <div class="btn-group">
-                    <a href="{{ route('TaskCreate', ['id' => $project->id]) }}" class="btn btn-default"> Nova Tarefa </a>
+                    <a href="{{ route('TaskCreate', ['id' => $project->id]) }}" class="btn btn-primary">
+                      <i class="fa fa-floppy-o"></i>  Nova Tarefa
+                    </a>
                 </div>
             </div>
         </div> <!-- .row -->
@@ -87,14 +89,16 @@
                     <p></p>
                 </div>
                 <div class="modal-footer">
-                    <div class="pull-left">
-                        <form class="form-inline formDelete" href="" action="">
+                    <div class="col-md-1">
+                        <a class="btn btn-success" href=""><i class="fa fa-edit"></i></a>
+                    </div>
+                    <div class="col-md-1">
+                        <form class="form-inline formDelete" action="">
                             <button class="btn btn-danger" >
                                 <i class="fa fa-trash"></i>
                             </button>
-
                         </form>
-                        <a class="btn btn-default" href=""><i class="fa fa-edit"></i></a>
+
 
                     </div>
                     <div class="pull-right">
@@ -133,13 +137,12 @@
                     title.append(task.nome);
 
                     body.empty();
-                    body.append('<p>Este é o corpo do Modal</p>');
+                    body.append('<p>Aqui fica a descrição da tarefa</p>');
 
-                    $('.modal-footer .btn-default').attr('href', '/project/task/'+id+'/edit');
-                    $('.modal-footer .formDelete').attr('href', '/project/task/'+id+'/destroy');
+                    $('.modal-footer .btn-success').attr('href', '/project/task/'+id+'/edit');
+                    $('.formDelete').attr('action', '/project/task/'+id+'/destroy');
 
                     //Popular Select
-//                    $('select')
                     var status = data.select ;
                     var footer_html = '<option value="0">Status</option>';
 
@@ -170,12 +173,11 @@
 
                 });
 
-            $('.formDelete').click(function excluir(e){
+            $('.btn-danger').click(function excluir(e){
                 e.preventDefault();
-                //var btn = $(this);
                 swal({
                             title: "Exclusão de Tarefa",
-                            text: "Você deseja realmente excluir a tarefa?",
+                            text: "Você deseja realmente excluir a tarefa ?",
                             type: "warning",
                             showCancelButton: true,
                             confirmButtonColor: '#DD6B55',
@@ -188,8 +190,7 @@
                         function(isConfirm){
                             if (isConfirm){
 
-                                //btn.closest('form').trigger('submit');
-                                $('.formDelete').submit();
+                              $('.formDelete').submit();
 
                             }
                         });

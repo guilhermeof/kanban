@@ -44,6 +44,29 @@ class TaskController extends Controller
         return view('tasks.index',['tasks' => $tasks , 'project' => $project]);
     }
 
+    public function kanban($idProject)
+    {
+        $project = Project::find($idProject);
+
+        $tasksAll = $project->tasks;
+
+        $tasks = ['todo' => [], 'doing' => [], 'review' => [], 'done' => []];
+
+        foreach($tasksAll as $obj) {
+            if($obj->status == "todo") {
+                $tasks['todo'][] = $obj;
+            } elseif ($obj->status == 'doing') {
+                $tasks['doing'][] = $obj;
+            } elseif ($obj->status == 'review') {
+                $tasks['review'][] = $obj;
+            } else {
+                $tasks['done'][] = $obj;
+            }
+        }
+
+        return view('tasks.kanban',['tasks' => $tasks , 'project' => $project]);
+    }
+
     public function create($idProject)
     {
 
@@ -71,7 +94,7 @@ class TaskController extends Controller
         flash('Tarefa Criada com Sucesso !', 'success');
 
 
-        return redirect()->route('TaskMain', ['id' => $request-> idProject]);
+        return redirect()->route('TaskKanban', ['id' => $request-> idProject]);
 
     }
 
@@ -95,7 +118,7 @@ class TaskController extends Controller
             DB::commit();
             flash('Tarefa Deletado com Sucesso !', 'success');
 
-            return redirect()->route('TaskMain', ['id' => $idProjeto]);
+            return redirect()->route('TaskKanban', ['id' => $idProjeto]);
 
         } catch (\Exception $e) {
 
@@ -133,7 +156,7 @@ class TaskController extends Controller
 
         flash('Tarefa Atualizada com Sucesso !', 'success');
 
-        return redirect()->route('TaskMain', ['id' => $task->idProject]);
+        return redirect()->route('TaskKanban', ['id' => $task->idProject]);
     }
 
     public function status($id)
@@ -169,7 +192,7 @@ class TaskController extends Controller
 
         $task->save();
 
-        return redirect()->route('TaskMain', ['id' => $task->idProject]);
+        return redirect()->route('TaskKanban', ['id' => $task->idProject]);
     }
 
     public function async($id)
@@ -185,11 +208,11 @@ class TaskController extends Controller
         $select = [];
 
         if($task->status == 'todo') {
-            $select = ['doing'];
+            $select = ['Doing'];
         } elseif($task->status == 'doing') {
-            $select = ['todo', 'review'];
+            $select = ['To Do', 'Review'];
         } elseif($task->status == 'review') {
-            $select = ['done'];
+            $select = ['Done'];
         }else {
             $select = [];
         }

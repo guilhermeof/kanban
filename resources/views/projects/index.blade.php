@@ -25,25 +25,28 @@
 
             @foreach($projects as $project)
             <div class="col-md-4">
-                {{--<a href="{{ route('TaskMain', ['id' => $project->id]) }}">--}}
+                <a href="{{ route('TaskKanban', ['id' => $project->id]) }}">
                         <div class="panel panel-default panel-body-project">
                             <div class="panel-body">
                                 <p class="text-justify">{{ $project->nome }}</p>
 
 
                                 <div class="row">
-                                    <div class="col-md-3 ">
-                                        <a href="{{ route('TaskMain', ['id' => $project->id]) }}" class="btn btn-info fa fa-angle-up">Abrir</a>
 
-                                    </div>
+                                    <div class="col-md-2">
 
-                                    <div class="col-md-3">
-                                        <a href="{{ route('ProjectEdit',['id'=>$project->id]) }}" class="btn btn-success fa fa-edit">Editar</a>
+                                        <a href="{{ route('ProjectEdit',['id'=>$project->id]) }}">
+                                            <button class="btn btn-success">
+                                                <i class=" fa fa-edit"></i>
+                                            </button>
+                                        </a>
                                     </div>
-                                     <div class="col-md-5 text-right ">
-                                        {!! Form::open([ 'method' => 'DELETE', 'route' => ['ProjectDestroy', $project->id]]) !!}
-                                        {!! Form::button('Remover', ['class' => 'btn btn-danger fa fa-trash-o', 'type' => 'submit', 'style' => 'color:black']) !!}
-                                        {!! Form::close() !!}
+                                     <div class="col-md-2 ">
+                                         <form class="form-inline formDelete" action="{{ route('ProjectDestroy', [$project->id]) }}">
+                                             <button class="btn btn-danger" >
+                                                 <i class="fa fa-trash"></i>
+                                             </button>
+                                         </form>
                                     </div>
 
 
@@ -53,7 +56,7 @@
                             </div>
                         </div>
 
-                {{--</a>--}}
+                </a>
             </div>
             @endforeach
         </div>
@@ -66,7 +69,6 @@
 
     $('.btn-danger').click(function excluir(e){
             e.preventDefault();
-        var btn = $(this);
         swal({
                     title: "Exclusão de Projeto",
                     text: "Você deseja realmente excluir o projeto?",
@@ -82,7 +84,8 @@
                 function(isConfirm){
                     if (isConfirm){
 
-                        btn.closest('form').trigger("submit");
+
+                        $('.formDelete').submit();
 
 
                     }
