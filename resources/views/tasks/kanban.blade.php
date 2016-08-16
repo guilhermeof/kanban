@@ -128,7 +128,7 @@
                 <div class="modal-body">
                     <div class="text-center">
                         <i class="fa fa-refresh fa-5x fa-spin"></i>
-                        <h4>Processing...</h4>
+                        <h4>Processando...</h4>
                     </div>
                 </div>
             </div>
@@ -176,7 +176,7 @@
 @section('scripts')
     <script type="application/javascript">
 
-
+        var csrf_token = "{{ csrf_token() }}";
 
         $(function () {
             var kanbanCol = $('.panel-body');
@@ -214,14 +214,25 @@
                     var elementId = event.originalEvent.dataTransfer.getData("text/plain");
                     var element = document.getElementById(elementId);
 
-                    var idTask = elementId;
-                    var status = targetId;
+                    var data = { task: elementId, status: targetId, _token: csrf_token };
 
-                    console.log(idTask);
-                    console.log(status);
+                    $('#processing-modal').modal('toggle');
 
-                    children.prepend(element);
-
+                    $.ajax({
+                        type: 'POST',
+                        url: "/project/task/changestatus",
+                        data: data,
+                        success: function(data) {
+                            children.prepend(element);
+                            toastr.success('Tarefa atualizada com sucesso.', null, {progressBar: true} );
+                        },
+                        error: function(xhr, textStatus, error) {
+                            toastr.error(xhr.responseText, null, {progressBar: true} );
+                        },
+                        complete: function() {
+                            $('#processing-modal').modal('toggle');
+                        }
+                    });
                 }
 
                event.preventDefault();

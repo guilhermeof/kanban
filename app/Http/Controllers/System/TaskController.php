@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Http\Controllers\System;
 use App\Http\Requests;
+use Illuminate\Http\JsonResponse;
+use Mockery\CountValidator\Exception;
 use Symfony\Component\HttpFoundation\Response;
 
 
@@ -173,33 +175,54 @@ class TaskController extends Controller
         return redirect()->route('TaskKanban', ['id' => $task->idProject]);
     }
 
-    public function async($id)
+    public function ascynChangeStatus(Request $request)
     {
-        $task = Task::find($id);
+        $taskId = $request->get("task");
+        $status = $request->get("status");
 
-        $result = ['data' => [], 'error' => []];
+        try {
+            $task = Task::find($taskId);
 
-        if(is_null($task)) {
-            $result['error'] = "Task não encontrada";
-            return response()->json($result, 404);
+            if (is_null($task)) {
+                return new JsonResponse("Tarefa não existe.", 404, [], JSON_UNESCAPED_UNICODE);
+            }
+
+            if ( !$this->canChangeStatus($task->status, $status)) {
+                return new JsonResponse('Você não pode alterar essa tarefa para este status.', 403, [], JSON_UNESCAPED_UNICODE);
+            }
+
+            $task->status = $status;
+
+            $task->save();
+
+            return new JsonResponse("Tarefa atualizada com sucesso.");
+        } catch (Exception $e) {
+            return new JsonResponse("Erro ao tentar salvar. Por favor, tente novamente.", 500);
         }
-        $select = [];
+    }
 
-        if($task->status == 'todo') {
-            $select = ['Doing'];
-        } elseif($task->status == 'doing') {
-            $select = ['To Do', 'Review'];
-        } elseif($task->status == 'review') {
-            $select = ['Done'];
-        }else {
-            $select = [];
+    private function canChangeStatus($statusAtual, $novoStatus)
+    {
+        $novoStatus = strtolower($novoStatus);
+
+        switch ($statusAtual) {
+            case 'todo':
+                if ($novoStatus == 'doing') {
+                    return true;
+                }
+            break;
+            case 'doing':
+                if ($novoStatus == 'todo' || $novoStatus == 'review') {
+                    return true;
+                }
+            break;
+            case 'review':
+                if ($novoStatus == 'done') {
+                    return true;
+                }
+            break;
         }
 
-        $result = array(
-            'task' => $task,
-            'select' => $select
-        );
-
-        return response()->json($result, 200);
+        return false;
     }
 }
