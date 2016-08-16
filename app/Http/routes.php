@@ -49,12 +49,11 @@ Route::group(['prefix' => 'project', 'namespace' => 'System'], function (){
 
     Route::get('/task/{task}', 'TaskController@status')->name('TaskAtt');
 
-    Route::get('/task/{id}/async/{status}', 'TaskController@async')->name('async');
-
     Route::post('/task/changestatus', 'TaskController@ascynChangeStatus')->name('ascynChangeStatus');
 
     Route::get('/task/change/{id}/status/{status}', 'TaskController@changeStatus');
 
+    Route::get('/task/{id}/show', 'TaskController@show')->name('show');
 
 });
 

@@ -136,7 +136,7 @@
     </div>
     </div>
 
-    <div class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal modalTela fade" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -159,12 +159,6 @@
 
 
                     </div>
-                    <div class="pull-right">
-                        <form method="get" class="form-inline formStatus" action="">
-                            <select name="status" class="form-control"></select>
-                            <button class="btn btn-info btn-submit">Ok</button>
-                        </form>
-                    </div>
                 </div>
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
@@ -179,11 +173,62 @@
         var csrf_token = "{{ csrf_token() }}";
 
         $(function () {
-            var kanbanCol = $('.panel-body');
-            //kanbanCol.css('max-height', (window.innerHeight - 150) + 'px');
+            $('.grab .kanban-entry-inner').click(function () {
+                var id = $(this).parent().attr('id');
 
-            //var kanbanColCount = parseInt(kanbanCol.length);
-            //$('.container-fluid').css('min-width', (kanbanColCount * 350) + 'px');
+                $.ajax({
+                    method: 'GET',
+                    url: '/project/task/'+id+'/show'
+                }).done(function (data){
+                    var task = data.task;
+                    var modal = $('.modalTela');
+
+                    var title = $('.modalTela .modal-title');
+                    var body = $('.modalTela .modal-body');
+                    var footer = $('.modalTela .modal-footer');
+
+                    title.empty();
+                    title.append(task.nome);
+
+                    body.empty();
+                    body.append('<p>Aqui fica a descrição da tarefa</p>');
+
+                    $('.modal-footer .btn-success').attr('href', '/project/task/'+id+'/edit');
+                    $('.formDelete').attr('action', '/project/task/'+id+'/destroy');
+
+
+                    modal.modal();
+                }).fail(function(data){
+                    var obj = data.responseJSON;
+                    alert(obj.error);
+                });
+
+                $('.btn-danger').click(function excluir(e){
+                    e.preventDefault();
+                    swal({
+                                title: "Exclusão de Tarefa",
+                                text: "Você deseja realmente excluir a tarefa ?",
+                                type: "warning",
+                                showCancelButton: true,
+                                confirmButtonColor: '#DD6B55',
+                                confirmButtonText: "Sim",
+                                cancelButtonText: "Não",
+                                closeOnConfirm: false,
+                                closeOnCancel: true
+                            },
+
+                            function(isConfirm){
+                                if (isConfirm){
+
+                                    $('.formDelete').submit();
+
+                                }
+                            });
+                });
+
+
+            });
+
 
             draggableInit();
 

@@ -142,20 +142,6 @@
                     $('.modal-footer .btn-success').attr('href', '/project/task/'+id+'/edit');
                     $('.formDelete').attr('action', '/project/task/'+id+'/destroy');
 
-                    //Popular Select
-                    var status = data.select ;
-                    var footer_html = '<option value="0">Status</option>';
-
-                    if (status.length > 0){
-                        for(var i=0; i<status.length;i++){
-                            footer_html += '<option value="'+status[i]+'">'+status[i]+'</option>';
-                        }
-                        $('select').empty();
-                        $('select').append(footer_html);
-                        $('.formStatus').attr('action', '/project/task/change/'+id+'/status');
-                    }else {
-                        $('.formStatus').hide();
-                    }
 
                     modal.modal();
                 }).fail(function(data){
