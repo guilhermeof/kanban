@@ -9932,6 +9932,10 @@ h1 {
     background-color: #338cb7;
 }
 
+.panel {
+    max-height: none;
+}
+
 #projects a {
     color: inherit;
 }

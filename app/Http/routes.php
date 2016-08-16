@@ -49,9 +49,9 @@ Route::group(['prefix' => 'project', 'namespace' => 'System'], function (){
 
     Route::get('/task/{task}', 'TaskController@status')->name('TaskAtt');
 
-    Route::get('/task/{id}/async', 'TaskController@async')->name('async');
+    Route::get('/task/{id}/async/{status}', 'TaskController@async')->name('async');
 
-    Route::get('/task/change/{id}/status', 'TaskController@changeStatus');
+    Route::get('/task/change/{id}/status/{status}', 'TaskController@changeStatus');
 
 
 });

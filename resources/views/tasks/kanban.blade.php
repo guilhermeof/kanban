@@ -135,17 +135,55 @@
         </div>
     </div>
     </div>
+
+    <div class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title"></h4>
+                </div>
+                <div class="modal-body">
+                    <p></p>
+                </div>
+                <div class="modal-footer">
+                    <div class="col-md-1">
+                        <a class="btn btn-success" href=""><i class="fa fa-edit"></i></a>
+                    </div>
+                    <div class="col-md-1">
+                        <form class="form-inline formDelete" action="">
+                            <button class="btn btn-danger" >
+                                <i class="fa fa-trash"></i>
+                            </button>
+                        </form>
+
+
+                    </div>
+                    <div class="pull-right">
+                        <form method="get" class="form-inline formStatus" action="">
+                            <select name="status" class="form-control"></select>
+                            <button class="btn btn-info btn-submit">Ok</button>
+                        </form>
+                    </div>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
 @endsection
 
 
 @section('scripts')
     <script type="application/javascript">
+
+
+
         $(function () {
             var kanbanCol = $('.panel-body');
-            kanbanCol.css('max-height', (window.innerHeight - 150) + 'px');
+            //kanbanCol.css('max-height', (window.innerHeight - 150) + 'px');
 
-            var kanbanColCount = parseInt(kanbanCol.length);
-            $('.container-fluid').css('min-width', (kanbanColCount * 350) + 'px');
+            //var kanbanColCount = parseInt(kanbanCol.length);
+            //$('.container-fluid').css('min-width', (kanbanColCount * 350) + 'px');
 
             draggableInit();
 
@@ -174,17 +212,15 @@
 
                 if (sourceId != targetId) {
                     var elementId = event.originalEvent.dataTransfer.getData("text/plain");
+                    var element = document.getElementById(elementId);
 
-                    $('#processing-modal').modal('toggle'); //before post
+                    var idTask = elementId;
+                    var status = targetId;
 
+                    console.log(idTask);
+                    console.log(status);
 
-
-                    // Post data
-                    setTimeout(function () {
-                        var element = document.getElementById(elementId);
-                        children.prepend(element);
-                        $('#processing-modal').modal('toggle'); // after post
-                    }, 1000);
+                    children.prepend(element);
 
                 }
 
@@ -194,15 +230,3 @@
 
     </script>
 @stop
-
-
-
-
-
-
-
-
-
-
-
-

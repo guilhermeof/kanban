@@ -159,28 +159,6 @@ class TaskController extends Controller
         return redirect()->route('TaskKanban', ['id' => $task->idProject]);
     }
 
-    public function status($id)
-    {
-        $status = Task::find($id);
-
-
-        if($status->status === "todo"){
-            $status->status = "doing";
-            $status->save();
-            return redirect()->back();
-        }
-        if($status->status === "doing"){
-            $status->status = "review";
-            $status->save();
-            return redirect()->back();
-        }
-        if($status->status === "review"){
-            $status->status = "done";
-            $status->save();
-            return redirect()->back();
-        }
-    }
-
     public function changeStatus($id, Request $request)
     {
         $task = Task::find($id);
