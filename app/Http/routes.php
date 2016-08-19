@@ -41,7 +41,7 @@ Route::group(['prefix' => 'project', 'namespace' => 'System'], function (){
 
     Route::post('/task/store', 'TaskController@store')->name('TaskStore');
 
-    Route::get('/task/{id}/destroy','TaskController@destroy' )->name('TaskDestroy');
+    Route::post('/task/destroy','TaskController@destroy' )->name('TaskDestroy');
 
     Route::get('/task/{id}/edit', 'TaskController@edit' )->name('TaskEdit');
 

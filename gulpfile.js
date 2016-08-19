@@ -19,6 +19,7 @@ elixir(function(mix) {
         '../../../node_modules/font-awesome/css/font-awesome.css',
         '../../../node_modules/sweetalert/dist/sweetalert.css',
         '../../../node_modules/toastr/build/toastr.css',
+        '../../../node_modules/bootstrap-editable/bootstrap-editable/css/bootstrap-editable.css',
         'custom.css'
     ]);
 
@@ -31,6 +32,7 @@ elixir(function(mix) {
         '../../../node_modules/jquery/dist/jquery.js',
         '../../../node_modules/bootstrap/dist/js/bootstrap.js',
         '../../../node_modules/sweetalert/dist/sweetalert-dev.js',
-        '../../../node_modules/toastr/build/toastr.min.js'
+        '../../../node_modules/toastr/build/toastr.min.js',
+        '../../../node_modules/bootstrap-editable/bootstrap-editable/js/bootstrap-editable.js'
     ]);
 });

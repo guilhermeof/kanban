@@ -72,11 +72,18 @@ class TaskController extends Controller
     public function create($idProject)
     {
 
+        $result = ['data' => []];
+
         $project = Project::find($idProject);
 
-        return view('tasks.create', ['project' => $project]);
+        $result = array(
+            'project' => $project
+        );
+
+        return response()->json($result, 200);
 
     }
+
 
     public function store(Request $request)
     {
@@ -86,22 +93,33 @@ class TaskController extends Controller
             'idProject' => 'required'
         ));
 
-        $task = new Task();
-        $task->nome = $request->nome;
-        $task->idProject = $request->idProject;
+
+        try{
+            $task = new Task();
 
 
-        $task->save();
+            if (!$request->idProject){
+                return new JsonResponse("O id do projeto não foi encontrado", 400, [], JSON_UNESCAPED_UNICODE);
+            }
 
-        flash('Tarefa Criada com Sucesso !', 'success');
+            $task->nome = $request->nome;
+            $task->idProject = $request->idProject;
+
+            $task->save();
+
+            return new JsonResponse("Tarefa criado com sucesso", 201);
 
 
-        return redirect()->route('TaskKanban', ['id' => $request-> idProject]);
+        }catch (Exception $e){
+            return new JsonResponse("Erro ao tentar criar nova tarefa. Por favor tente novamente", 500);
+
+        }
 
     }
 
-    public function destroy($idTask)
+    public function destroy(Request $request)
     {
+        $idTask = $request->get("task");
 
         try {
 
@@ -110,7 +128,7 @@ class TaskController extends Controller
             $task = Task::find($idTask);
 
             if (!$task) {
-                flash('Erro !', 'danger');
+                return new JsonResponse("Tarefa não existe.", 404, [], JSON_UNESCAPED_UNICODE);
             }
 
             $idProjeto = $task->idProject;
@@ -118,17 +136,15 @@ class TaskController extends Controller
             $task->delete();
 
             DB::commit();
-            flash('Tarefa Deletado com Sucesso !', 'success');
 
-            return redirect()->route('TaskKanban', ['id' => $idProjeto]);
+            return new JsonResponse("Tarefa atualizada com sucesso.");
+
 
         } catch (\Exception $e) {
 
             DB::rollBack();
 
-            if (config('app.debug') == true) {
-                return $e->getMessage();
-            }
+            return new JsonResponse("Erro ao tentar salvar. Por favor, tente novamente.", 500);
 
         }
 
