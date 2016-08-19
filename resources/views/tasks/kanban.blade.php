@@ -171,39 +171,20 @@
                     <h3 class="modal-title modal-title-create">Modal title</h3>
                 </div>
                 <div class="modal-body modal-body-create">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="panel panel-default">
-                                <div class="panel-body">
+                    <div class="panel-body">
+                        {!! Form::open(['route'=>'TaskStore']) !!}
 
-                                {!! Form::open(['route'=>'TaskStore']) !!}
+                        {!! Form::input('hidden', 'idProject', $project->id) !!}
 
-                                {!! Form::input('hidden', 'idProject', $project->id) !!}
-
-                                <!-- Nome Form Input -->
-                                    <div class="form-group">
-                                        {!! Form::label('nome', 'Nome :') !!}
-                                        {!! Form::text('nome', null,['class' => 'form-control']) !!}
-                                    </div>
-
-
-                                    <div class="form-group">
-                                        {!! Form::submit('Criar Tarefa', ['class' => 'btn btn-primary btn-submit-create']) !!}
-
-                                    </div>
-                                    {!! Form::close() !!}
-
-
-                                </div>
-
-                            </div>
-                        </div>
-
+                        <!-- Nome Form Input -->
+                        {!! Form::label('nome', 'Nome :') !!}
+                        {!! Form::text('nome', null,['class' => 'form-control']) !!}
+                        {{--{!! Form::submit('Criar Tarefa', ['class' => 'btn btn-primary']) !!}--}}
+                        {!! Form::close() !!}
                     </div>
                 </div>
                 <div class="modal-footer modal-footer-create">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
+                    <button type="submit" class="btn btn-primary btn-submit-create">Criar</button>
                 </div>
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
@@ -230,6 +211,7 @@
                     var modal = $('.modalCreate');
                     var title = $('.modalCreate .modal-title-create');
 
+                    title.empty();
                     title.append('Nova tarefa');
 
                     modal.find('.btn-submit-create').attr('idProject', id);
@@ -244,7 +226,7 @@
         $('.modalCreate .btn-submit-create').click(function () {
            var id = $('.modalCreate form').attr('route');
 
-           // var data = {project: id, _token: csrf_token };
+           var data = {project: id, _token: csrf_token };
 
 
             $.ajax({
