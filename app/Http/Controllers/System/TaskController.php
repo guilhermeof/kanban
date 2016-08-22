@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\System;
 use App\Http\Requests;
 use Illuminate\Http\JsonResponse;
+use Validator;
 use Mockery\CountValidator\Exception;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -69,8 +70,9 @@ class TaskController extends Controller
         return view('tasks.kanban',['tasks' => $tasks , 'project' => $project]);
     }
 
-    public function create($idProject)
+    public function create(Request $request)
     {
+        $idProject = $request->get("project");
 
         $result = ['data' => []];
 
@@ -87,34 +89,36 @@ class TaskController extends Controller
 
     public function store(Request $request)
     {
-        // Validação
-        $this->validate($request, array(
-            'nome' => 'required|max:400',
-            'idProject' => 'required'
-        ));
 
+        $validator = Validator::make($request->all(), [
+            'nome' => 'required|min:7|max:400',
+            'project_id' => 'required',
+        ],
+        [
+            'nome.min' => 'O campo nome deve ter no mínimo 7 caracteres',
+            'project_id.required' => 'O id do projeto não foi encontrado'
+        ]);
+
+        if ($validator->fails()) {
+            return new JsonResponse($validator->messages(), 500, [], JSON_UNESCAPED_UNICODE);
+        }
 
         try{
             $task = new Task();
 
-
-            if (!$request->idProject){
+            if (!$request->project_id){
                 return new JsonResponse("O id do projeto não foi encontrado", 400, [], JSON_UNESCAPED_UNICODE);
             }
 
             $task->nome = $request->nome;
-            $task->idProject = $request->idProject;
+            $task->idProject = $request->project_id;
 
             $task->save();
 
-            return new JsonResponse("Tarefa criado com sucesso", 201);
-
-
+            return new JsonResponse(['task' => $task,'message' =>"Tarefa criada com sucesso"], 200);
         }catch (Exception $e){
             return new JsonResponse("Erro ao tentar criar nova tarefa. Por favor tente novamente", 500);
-
         }
-
     }
 
     public function destroy(Request $request)
@@ -137,14 +141,14 @@ class TaskController extends Controller
 
             DB::commit();
 
-            return new JsonResponse("Tarefa atualizada com sucesso.");
+            return new JsonResponse("Tarefa deletada com sucesso.");
 
 
         } catch (\Exception $e) {
 
             DB::rollBack();
 
-            return new JsonResponse("Erro ao tentar salvar. Por favor, tente novamente.", 500);
+            return new JsonResponse("Erro ao tentar deletar tarefa. Por favor, tente novamente.", 500);
 
         }
 

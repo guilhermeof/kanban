@@ -172,19 +172,14 @@
                 </div>
                 <div class="modal-body modal-body-create">
                     <div class="panel-body">
-                        {!! Form::open(['route'=>'TaskStore']) !!}
-
-                        {!! Form::input('hidden', 'idProject', $project->id) !!}
-
-                        <!-- Nome Form Input -->
-                        {!! Form::label('nome', 'Nome :') !!}
-                        {!! Form::text('nome', null,['class' => 'form-control']) !!}
-                        {{--{!! Form::submit('Criar Tarefa', ['class' => 'btn btn-primary']) !!}--}}
-                        {!! Form::close() !!}
+                            {!! Form::input('hidden', 'project_id', $project->id) !!}
+                            <!-- Nome Form Input -->
+                            {!! Form::label('nome', 'Nome :') !!}
+                            {!! Form::text('nome', null, ['class' => 'form-control formNome', 'id' => 'nome']) !!}
                     </div>
                 </div>
                 <div class="modal-footer modal-footer-create">
-                    <button type="submit" class="btn btn-primary btn-submit-create">Criar</button>
+                    {!! Form::submit('Criar Tarefa', ['class' => 'btn btn-primary btn-submit-create']) !!}
                 </div>
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
@@ -197,50 +192,86 @@
     <script type="application/javascript">
 
         var csrf_token = "{{ csrf_token() }}";
+        var project_id = "{{$project->id}}";
 
-        $(function () {
-            $('.btn-create').click(function () {
-                var id = $(this).attr('id');
+        $("html").keypress(function(event){
+            if ( event.which == 78 ) {
+                event.preventDefault();
 
-                
-                $.ajax({
-                    method: 'GET',
-                    url: '/project/'+id+'/task/create'
+                $('.modalCreate').modal();
+            }
+        });
 
-                }).done(function (data) {
-                    var modal = $('.modalCreate');
-                    var title = $('.modalCreate .modal-title-create');
 
-                    title.empty();
-                    title.append('Nova tarefa');
 
-                    modal.find('.btn-submit-create').attr('idProject', id);
-                    modal.modal();
-
-                });
-
+        $('.btn-create').click(function () {
+            var titleCreate = $('.modalCreate .modal-title');
+            $('.modalCreate .formNome').each(function(){
+                $(this).val('');
             });
 
+
+
+
+
+            titleCreate.empty();
+            titleCreate.append("Nova Tarefa");
+
+            $('.modalCreate').modal();
+        });
+
+        $("#nome").keypress(function(event){
+            if ( event.which == 13 ) {
+                event.preventDefault();
+
+                salvarTarefa();
+            }
         });
 
         $('.modalCreate .btn-submit-create').click(function () {
-           var id = $('.modalCreate form').attr('route');
+            salvarTarefa();
+        });
 
-           var data = {project: id, _token: csrf_token };
+        var salvarTarefa = function() {
 
+            var nome = $("#nome").val();
+
+            if (nome.length < 6) {
+                toastr.warning('O nome da tarefa deve ter pelo menos 6 caracteres.', null, {progressBar: true} );
+
+                return;
+            }
+
+            var data = {project_id: project_id, _token: csrf_token, nome: nome };
 
             $.ajax({
                 type: 'POST',
                 url: '/project/task/store',
+                data: data,
                 success: function (data) {
-                    toastr.success('Tarefa criada com sucesso.', null, {progressBar: true} );
+                    toastr.success(data.message, null, {progressBar: true} );
+                    //console.log(data.task);
+                    var task = data.task;
+                    var article = '<article class="kanban-entry grab" id="'+task.id+'" draggable="true">' +
+                            '<div class="kanban-entry-inner">' +
+                            '<div class="kanban-label">' +
+                            '<h2><a href="#">Tarefa</a></h2>' +
+                            '<p>'+task.nome+'</p>' +
+                            '</div></div></article>';
+
+                    $('#TODO').append(article);
                 },
                 error: function(xhr, textStatus, error) {
-                    toastr.error(xhr.responseText, null, {progressBar: true} );
+                    var erros = $.parseJSON(xhr.responseText);
+                    for(var key in erros){
+                        toastr.error(erros[key], null, {progressBar: true} );
+                    }
                 }
+
             });
-            $('.modalShow').modal('hide');
-        });
+
+            $('.modalCreate').modal('hide');
+        }
 
         $(function () {
             $('.grab .kanban-entry-inner').click(function () {

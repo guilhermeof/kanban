@@ -19,7 +19,7 @@
                 <div class="panel panel-default">
                     <div class="panel-body">
 
-                    {!! Form::open(['route'=>'TaskStore']) !!}
+                    {!! Form::open(['route' => 'TaskStore']) !!}
 
                     {!! Form::input('hidden', 'idProject', $project->id) !!}
 
