@@ -155,30 +155,39 @@ class TaskController extends Controller
 
     }
 
-    public function edit($id)
+    public function edit($idTask)
     {
-        $task = Task::find($id);
 
-        return view('tasks.edit', compact('task'));
+        $result = ['data' => []];
+
+        $task = Task::find($idTask);
+
+        $result = array(
+          'task' => $task
+        );
+
+        return response()->json($result, 200);
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, $idTask)
     {
         //Validação
         $this->validate($request, array(
             'nome' => 'required|max:400',
             'idProject' => 'required'
-
-
         ));
 
-        $task = Task::find($id);
+        try{
+            $task = Task::find($idTask);
 
-        $task->update($request->all());
-
-        flash('Tarefa Atualizada com Sucesso !', 'success');
-
-        return redirect()->route('TaskKanban', ['id' => $task->idProject]);
+            if (!$task){
+                return new JsonResponse("O id do projeto não foi encontrado", 400, [], JSON_UNESCAPED_UNICODE);
+            }
+            $task->update($request->all());
+            return new JsonResponse(['task' => $task,'message' =>"Tarefa atualizada com sucesso"], 200);
+        }catch (Exception $e){
+            return new JsonResponse("Erro ao tentar salvar. Por favor, tente novamente.", 500);
+        }
     }
 
     public function changeStatus($id, Request $request)

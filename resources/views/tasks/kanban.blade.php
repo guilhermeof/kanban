@@ -146,11 +146,15 @@
                     <h4 class="modal-title"></h4>
                 </div>
                 <div class="modal-body">
-                    <p></p>
+
+                    <input name="id_project" type="hidden" value="{{$task->idProject}}">
+                    <label for="nome">Editar Nome :</label>
+                    <input value="" class="form-control formNomeEdit" id="nomeEdit" type="text">
+
                 </div>
                 <div class="modal-footer">
-                    <div class="col-md-1">
-                        <a class="btn btn-success" href=""><i class="fa fa-edit"></i></a>
+                    <div class="col-md-3">
+                        <input class="btn btn-success btn-submitEdit" type="submit" value="Atualizar Tarefa">
                     </div>
                     <div class="col-md-1">
                         <button class="btn btn-danger">
@@ -172,14 +176,15 @@
                 </div>
                 <div class="modal-body modal-body-create">
                     <div class="panel-body">
-                            {!! Form::input('hidden', 'project_id', $project->id) !!}
-                            <!-- Nome Form Input -->
-                            {!! Form::label('nome', 'Nome :') !!}
-                            {!! Form::text('nome', null, ['class' => 'form-control formNome', 'id' => 'nome']) !!}
+
+                            <input name="project_id" type="hidden" value="{{$project->id}}">
+                            <label for="nome">Nome :</label>
+                            <input class="form-control formNome" id="nomeCreate" type="text">
+
                     </div>
                 </div>
                 <div class="modal-footer modal-footer-create">
-                    {!! Form::submit('Criar Tarefa', ['class' => 'btn btn-primary btn-submit-create']) !!}
+                    <input class="btn btn-primary btn-submit-create" type="submit" value="Criar Tarefa">
                 </div>
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
@@ -193,34 +198,50 @@
 
         var csrf_token = "{{ csrf_token() }}";
         var project_id = "{{$project->id}}";
+        var idProject = "{{$task->idProject}}";
 
+        //Abrindo modal com comando de telca SHIFT + N
         $("html").keypress(function(event){
+            var titleCreate = $('.modalCreate .modal-title');
             if ( event.which == 78 ) {
                 event.preventDefault();
+
+                titleCreate.empty();
+                titleCreate.append("Nova Tarefa");
+
+                $('.modalCreate .formNome').each(function(){
+                    $(this).val('');
+                });
 
                 $('.modalCreate').modal();
             }
         });
 
+        //Direcionando focus para o input nome do modal Create
+        $(".modalCreate").on('shown.bs.modal', function(){
+            $(this).find('#nomeCreate').focus();
+        });
 
+        //Direcionando focus para o input nome do modal Show
+        $(".modalShow").on('shown.bs.modal', function(){
+            $(this).find('#nomeEdit').focus();
+        });
 
+        //Abrindo modalCreate ao clicar no botão Nova Tarefa
         $('.btn-create').click(function () {
             var titleCreate = $('.modalCreate .modal-title');
-            $('.modalCreate .formNome').each(function(){
-                $(this).val('');
-            });
-
-
-
-
 
             titleCreate.empty();
             titleCreate.append("Nova Tarefa");
 
+            $('.modalCreate .formNome').each(function(){
+                $(this).val('');
+            });
+
             $('.modalCreate').modal();
         });
 
-        $("#nome").keypress(function(event){
+        $("#nomeCreate").keypress(function(event){
             if ( event.which == 13 ) {
                 event.preventDefault();
 
@@ -234,10 +255,10 @@
 
         var salvarTarefa = function() {
 
-            var nome = $("#nome").val();
+            var nome = $("#nomeCreate").val();
 
-            if (nome.length < 6) {
-                toastr.warning('O nome da tarefa deve ter pelo menos 6 caracteres.', null, {progressBar: true} );
+            if (nome.length < 7) {
+                toastr.warning('O nome da tarefa deve ter pelo menos 7 caracteres.', null, {progressBar: true} );
 
                 return;
             }
@@ -250,7 +271,6 @@
                 data: data,
                 success: function (data) {
                     toastr.success(data.message, null, {progressBar: true} );
-                    //console.log(data.task);
                     var task = data.task;
                     var article = '<article class="kanban-entry grab" id="'+task.id+'" draggable="true">' +
                             '<div class="kanban-entry-inner">' +
@@ -273,8 +293,7 @@
             $('.modalCreate').modal('hide');
         }
 
-        $(function () {
-            $('.grab .kanban-entry-inner').click(function () {
+            $(document).on('click','.grab .kanban-entry-inner', function () {
                 var id = $(this).parent().attr('id');
 
                 $.ajax({
@@ -284,19 +303,21 @@
                     var task = data.task;
                     var modal = $('.modalShow');
 
-                    var title = $('.modalShow .modal-title');
-                    var body = $('.modalShow .modal-body');
-                    var footer = $('.modalShow .modal-footer');
+                    $('.modalShow .formNomeEdit').each(function(){
+                        $(this).val('');
+                    });
 
+
+                    var title = $('.modalShow .modal-title');
+                    var body = $('.modalShow .formNomeEdit');
+                    var footer = $('.modalShow .modal-footer');
 
                     title.empty();
                     title.append(task.nome);
 
-
                     body.empty();
-                    body.append('<p>Aqui fica a descrição da tarefa</p>');
+                    body.append(task.nome);
 
-                    modal.find('.modal-footer .btn-success').attr('href', '/project/task/'+id+'/edit');
                     modal.find('.modal-footer .btn-danger').attr('data-task-id', id);
 
                     modal.modal();
@@ -305,6 +326,33 @@
                     toastr.error(obj.error);
                 });
             });
+
+        $(document).on('click', '.modalShow .btn-submitEdit',function () {
+            editarTarefa();
+        });
+
+        var editarTarefa = function() {
+            var id = $('.modalShow .btn-danger').attr('data-task-id');
+            var nomeEdit = $("#nomeEdit").val();
+
+            var dados = {idProject: idProject, task: id, _token: csrf_token, nome: nomeEdit };
+
+            $.ajax({
+                type: 'POST',
+                url: '/project/task/'+id+'/update',
+                data: dados,
+                success: function (dados) {
+                    toastr.success('Tarefa atualizada com sucesso.', null, {progressBar: true} );
+                    var task = dados.task;
+                    $('#'+id+' .kanban-entry-inner .kanban-label p').html(task.nome);
+                },
+                error: function(xhr, textStatus, error) {
+                    toastr.error(xhr.responseText, null, {progressBar: true} );
+                    }
+            });
+
+            $('.modalShow').modal('hide');
+        }
 
             $('.modalShow .btn-danger').click(function (e){
                 e.preventDefault();
@@ -349,7 +397,6 @@
                 $(this).find('i').toggleClass('fa-plus-circle fa-minus-circle');
                 $panelBody.slideToggle();
             });
-        });
 
         function draggableInit() {
             var sourceId;

@@ -30,7 +30,7 @@ Editar Projeto
 
                         <div class="form-group">
                             {!! Form::label('nome', 'Nome :') !!}
-                            {!! Form::text('nome', $task->nome, ['class' => 'form-control']) !!}
+                            {!! Form::text('nome', $task->nome, ['class' => 'form-control', 'autofocus']) !!}
                         </div>
 
                         <div class="form-group">
