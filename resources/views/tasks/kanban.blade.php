@@ -38,9 +38,6 @@
 
                         </div>
                     </div>
-                    <div class="panel-footer">
-                        <a href="{{ route('TaskCreate', ['id' => $project->id]) }}">Nova Tarefa...</a>
-                    </div>
                 </div>
             </div>
 
@@ -147,7 +144,7 @@
                 </div>
                 <div class="modal-body">
 
-                    <input name="id_project" type="hidden" value="{{$task->idProject}}">
+                    {{--<input name="id_project" type="hidden" value="{{$task->idProject}}">--}}
                     <label for="nome">Editar Nome :</label>
                     <input value="" class="form-control formNomeEdit" id="nomeEdit" type="text">
 
@@ -177,7 +174,7 @@
                 <div class="modal-body modal-body-create">
                     <div class="panel-body">
 
-                            <input name="project_id" type="hidden" value="{{$project->id}}">
+                            {{--<input name="project_id" type="hidden" value="{{$project->id}}">--}}
                             <label for="nome">Nome :</label>
                             <input class="form-control formNome" id="nomeCreate" type="text">
 
@@ -198,7 +195,6 @@
 
         var csrf_token = "{{ csrf_token() }}";
         var project_id = "{{$project->id}}";
-        var idProject = "{{$task->idProject}}";
 
         //Abrindo modal com comando de telca SHIFT + N
         $("html").keypress(function(event){
@@ -316,7 +312,7 @@
                     title.append(task.nome);
 
                     body.empty();
-                    body.append(task.nome);
+                    body.val(task.nome);
 
                     modal.find('.modal-footer .btn-danger').attr('data-task-id', id);
 
@@ -327,7 +323,7 @@
                 });
             });
 
-        $(document).on('click', '.modalShow .btn-submitEdit',function () {
+        $('.modalShow .btn-submitEdit').click(function () {
             editarTarefa();
         });
 
@@ -335,7 +331,7 @@
             var id = $('.modalShow .btn-danger').attr('data-task-id');
             var nomeEdit = $("#nomeEdit").val();
 
-            var dados = {idProject: idProject, task: id, _token: csrf_token, nome: nomeEdit };
+            var dados = {project_id: project_id, task: id, _token: csrf_token, nome: nomeEdit };
 
             $.ajax({
                 type: 'POST',

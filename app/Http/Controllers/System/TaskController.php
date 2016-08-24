@@ -68,6 +68,7 @@ class TaskController extends Controller
         }
 
         return view('tasks.kanban',['tasks' => $tasks , 'project' => $project]);
+
     }
 
     public function create(Request $request)
@@ -155,8 +156,9 @@ class TaskController extends Controller
 
     }
 
-    public function edit($idTask)
+    public function edit(Request $request)
     {
+        $idTask = $request->get("task");
 
         $result = ['data' => []];
 
@@ -174,7 +176,6 @@ class TaskController extends Controller
         //Validação
         $this->validate($request, array(
             'nome' => 'required|max:400',
-            'idProject' => 'required'
         ));
 
         try{
