@@ -196,7 +196,7 @@
         var csrf_token = "{{ csrf_token() }}";
         var project_id = "{{$project->id}}";
 
-        //Abrindo modal com comando de telca SHIFT + N
+         //Abrindo modal com comando de telca SHIFT + N
         $("html").keypress(function(event){
             var titleCreate = $('.modalCreate .modal-title');
             if ( event.which == 78 ) {
@@ -288,6 +288,7 @@
 
             $('.modalCreate').modal('hide');
         }
+
 
             $(document).on('click','.grab .kanban-entry-inner', function () {
                 var id = $(this).parent().attr('id');
