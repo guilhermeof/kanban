@@ -398,7 +398,7 @@
         function draggableInit() {
             var sourceId;
 
-            $('[draggable=true]').bind('dragstart', function (event) {
+            $(document,'[draggable=true]').bind('dragstart', function (event) {
                 sourceId = $(this).parent().attr('id');
                 event.originalEvent.dataTransfer.setData("text/plain", event.target.getAttribute('id'));
             });
